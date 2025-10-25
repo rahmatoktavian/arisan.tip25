@@ -1,7 +1,7 @@
 {
+  "homepage": "https://rahmatoktavian.github.io/arisan.tip25",
   "name": "arisan.tip25",
   "version": "0.1.0",
-  "homepage": "https://rahmatoktavian.github.io/arisan.tip25",
   "private": true,
   "dependencies": {
     "@supabase/supabase-js": "^2.33.2",
@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd-mobile": "^5.32.2",
     "antd-mobile-icons": "^0.3.0",
+    "gh-pages": "^6.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
@@ -19,6 +20,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
