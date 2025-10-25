@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/arisan.tip25/static/css/main.6f8df789.css",
+    "main.js": "/arisan.tip25/static/js/main.a0c86760.js",
+    "static/js/453.04a70a28.chunk.js": "/arisan.tip25/static/js/453.04a70a28.chunk.js",
+    "index.html": "/arisan.tip25/index.html",
+    "main.6f8df789.css.map": "/arisan.tip25/static/css/main.6f8df789.css.map",
+    "main.a0c86760.js.map": "/arisan.tip25/static/js/main.a0c86760.js.map",
+    "453.04a70a28.chunk.js.map": "/arisan.tip25/static/js/453.04a70a28.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6f8df789.css",
+    "static/js/main.a0c86760.js"
+  ]
+}
