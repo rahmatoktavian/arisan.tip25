@@ -1,7 +1,7 @@
 {
-  "name": "hmd_app_v2",
+  "name": "arisan.tip25",
   "version": "0.1.0",
-  "homepage": "https://hmd.genggamgemilang.id/",
+  "homepage": "https://rahmatoktavian.github.io/arisan.tip25",
   "private": true,
   "dependencies": {
     "@supabase/supabase-js": "^2.33.2",
