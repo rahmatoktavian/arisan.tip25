@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { NavBar, List, Popup, Form, Input, Radio, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
-import { StopOutline, StarOutline, CheckCircleOutline, QuestionCircleOutline } from 'antd-mobile-icons'
+import { NavBar, List, Popup, Form, Input, Radio, SearchBar, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
+import { StopOutline, StarOutline, StarFill, CheckCircleOutline, QuestionCircleOutline } from 'antd-mobile-icons'
 import { supabase } from '../supabase'
 
 function Setoran() {
@@ -8,6 +8,7 @@ function Setoran() {
   const [popupVisible, setPopupVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [dataList, setDataList] = useState([])
+  const [dataSearch, setDataSearch] = useState('')
 
   // const [periodID, setPeriodeID] = useState('')
   const [pickerView, setPickerView] = useState(false)
@@ -17,7 +18,7 @@ function Setoran() {
 
   useEffect(() => {
     getDataPeriode()
-  }, []);
+  }, [dataSearch]);
 
   async function getDataPeriode() {
     const { data:periode } = await supabase.from("ar_periode")
@@ -41,73 +42,82 @@ function Setoran() {
   async function getDataList(periodeID) {
     Toast.show({ content: (<SpinLoading />) })
     const { data } = await supabase.from("ar_setoran_peserta")
-                              .select('id, periode_id, is_pemenang, nominal, tanggal, ar_peserta!inner(nama,telepon)')
+                              .select('id, periode_id, is_bayar, is_pemenang, ar_peserta!inner(nama,telepon)')
                               .eq('periode_id', periodeID)
+                              .ilike('ar_peserta.nama', '%'+dataSearch+'%')
                               .order('ar_peserta(nama)', { ascending:true })
 
     setDataList(data);
     Toast.clear()
   }
 
-  function onUpdate(row) {
-    if(row.tanggal != null) {
-      form.setFieldsValue({ 
-        id: row.id,
-        periode_id: row.periode_id,
-        nominal: row.nominal,
-        tanggal: row.tanggal,
-        is_pemenang: false,
-      });
-    } else {
-      const today = new Date();
-      const day = String(today.getDate()).padStart(2, '0');
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const year = today.getFullYear();
-      const formattedDate = `${year}-${month}-${day}`;
-      
-      form.setFieldsValue({ 
-        id: row.id,
-        periode_id: row.periode_id,
-        nominal: '',
-        tanggal: formattedDate,
-        is_pemenang: false,
-      });
-    }
-
-    setPopupVisible(true)
-  }
-
-  async function onSubmit(input) {
+  async function onUpdate(tipe, row) {
+    const isConfirmed = window.confirm("Are you sure you want to update?");
+    if (isConfirmed) {
     setIsLoading(true)
     
-    //insert
-    if(input.id === 0) {
-      await supabase.from("ar_setoran_peserta")
-              .insert({
-                nominal: input.nominal,
-                tanggal: input.tanggal,
+    if(tipe == 'bayar') {
+        await supabase.from("ar_setoran_peserta")
+            .update({
+                is_bayar: true,
               })
+            .eq('id', row.id)
 
-    //update
-    } else {
-      await supabase.from("ar_setoran_peserta")
-              .update({
-                nominal: input.nominal,
-                tanggal: input.tanggal,
-                is_pemenang: input.is_pemenang,
+      } else {
+        await supabase.from("ar_setoran_peserta")
+                .update({
+                    is_pemenang: false,
+                  })
+                .eq('is_pemenang', true)
+
+        await supabase.from("ar_setoran_peserta")
+            .update({
+                is_pemenang: true,
               })
-              .eq('id', input.id)
+            .eq('id', row.id)
+      }
+
+      await getDataList(row.periode_id)
+      setIsLoading(false)
+
+      Toast.show({
+        icon: 'success',
+        content: 'Berhasil simpan data',
+      })
     }
-
-    await getDataList(input.periode_id)
-    setPopupVisible(false)
-    setIsLoading(false)
-
-    Toast.show({
-      icon: 'success',
-      content: 'Berhasil simpan data',
-    })
   }
+
+  // async function onSubmit(input) {
+  //   setIsLoading(true)
+    
+  //   //insert
+  //   if(input.id === 0) {
+  //     await supabase.from("ar_setoran_peserta")
+  //             .insert({
+  //               nominal: input.nominal,
+  //               tanggal: input.tanggal,
+  //             })
+
+  //   //update
+  //   } else {
+  //     await supabase.from("ar_setoran_peserta")
+  //             .update({
+  //               nominal: input.nominal,
+  //               tanggal: input.tanggal,
+  //               is_pemenang: input.is_pemenang,
+  //             })
+  //             .eq('id', input.id)
+  //   }
+
+  //   await getDataList(input.periode_id)
+  //   setPopupVisible(false)
+  //   setIsLoading(false)
+
+  //   Toast.show({
+  //     icon: 'success',
+  //     content: 'Berhasil simpan data',
+  //   })
+  // }
 
   const onPickerChange = (value) => {
     pickerList[0].map(row => {
@@ -141,15 +151,16 @@ function Setoran() {
         cancelText='Batal'
       />
       
+      <SearchBar placeholder='Cari Nama Peserta' style={{ marginTop:10, marginBottom:10 }} onChange={(text) => setDataSearch(text)} />
+
       <div style={{height:600,overflow:'auto'}}>
         <List>
         {dataList && dataList.map((row, idx) =>
           <List.Item 
             key={idx}
-            description={row.nominal ? row.nominal.toLocaleString() : ''}
-            prefix={row.nominal ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
-            extra={row.is_pemenang && <StarOutline fontSize={25} color='var(--adm-color-primary)' />} 
-            onClick={() => onUpdate(row)}
+            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} onClick={() => onUpdate('bayar', row)} />} 
+            extra={row.is_bayar && (row.is_pemenang ? <StarFill fontSize={25} color='var(--adm-color-primary)' /> : <StarOutline fontSize={25} onClick={() => onUpdate('pemenang', row)} />)} 
+            // onClick={() => onUpdate(row)}
           >
             {row.ar_peserta.nama}
           </List.Item>
@@ -157,7 +168,7 @@ function Setoran() {
         </List>
       </div>
 
-      <Popup
+      {/* <Popup
         visible={popupVisible}
         onMaskClick={() => {setPopupVisible(false)}}
         onClose={() => {setPopupVisible(false)}}
@@ -197,7 +208,7 @@ function Setoran() {
             </Radio.Group>
           </Form.Item>
         </Form>
-      </Popup>
+      </Popup> */}
     </>
   );
 }

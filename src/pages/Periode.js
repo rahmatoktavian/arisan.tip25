@@ -73,6 +73,8 @@ function Periode() {
               .insert({
                 periode_id: periode_id,
                 peserta_id: item.id,
+                is_bayar: false,
+                is_pemenang: false,
               })
       })
 
@@ -97,7 +99,7 @@ function Periode() {
   }
 
   async function onDelete() {
-    const isConfirmed = window.confirm("Are you sure you want to delete this item?");
+    const isConfirmed = window.confirm("Are you sure you want to delete?");
     if (isConfirmed) {
       setIsLoading(true)
 

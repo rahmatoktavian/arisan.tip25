@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react"
-import { NavBar, List, Popup, Form, Input, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
-import { SetOutline, StarOutline, CheckCircleOutline, QuestionCircleOutline, EyeOutline } from 'antd-mobile-icons'
+import { NavBar, List, Popup, SearchBar, Form, Input, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
+import { SetOutline, StarFill, CheckCircleOutline, QuestionCircleOutline, EyeOutline } from 'antd-mobile-icons'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase'
 
 function Publik() {
+  const navigate = useNavigate()
+
   const [popupVisible, setPopupVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [dataList, setDataList] = useState([])
+  const [dataSearch, setDataSearch] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
   // const [periodID, setPeriodeID] = useState('')
@@ -17,7 +21,7 @@ function Publik() {
 
   useEffect(() => {
     getDataPeriode()
-  }, []);
+  }, [dataSearch]);
 
   async function getDataPeriode() {
     const { data:periode } = await supabase.from("ar_periode")
@@ -40,8 +44,9 @@ function Publik() {
   async function getDataList(periodeID) {
     Toast.show({ content: (<SpinLoading />) })
     const { data } = await supabase.from("ar_setoran_peserta")
-                              .select('id, nominal, tanggal, is_pemenang, ar_peserta!inner(nama,telepon)')
+                              .select('id, is_bayar, is_pemenang, ar_peserta!inner(nama,telepon)')
                               .eq('periode_id', periodeID)
+                              .ilike('ar_peserta.nama', '%'+dataSearch+'%')
                               .order('ar_peserta(nama)', { ascending:true })
 
     setDataList(data);
@@ -71,6 +76,8 @@ function Publik() {
       Toast.show({
         content: error.message
       })
+    } else {
+      navigate('/setoran')
     }
 
     setIsLoading(false)
@@ -93,14 +100,15 @@ function Publik() {
         cancelText='Batal'
       />
       
+      <SearchBar placeholder='Cari Nama Peserta' style={{ marginTop:10, marginBottom:10 }} onChange={(text) => setDataSearch(text)} />
+
       <div style={{height:600,overflow:'auto'}}>
         <List>
         {dataList && dataList.map((row, idx) =>
           <List.Item 
             key={idx}
-            description={row.nominal ? row.tanggal : ''}
-            prefix={row.nominal ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
-            extra={row.is_pemenang && <StarOutline fontSize={25} color='var(--adm-color-primary)' />} 
+            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
+            extra={row.is_pemenang && <StarFill fontSize={25} color='var(--adm-color-primary)' />} 
           >
             {row.ar_peserta.nama}
           </List.Item>

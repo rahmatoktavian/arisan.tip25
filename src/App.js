@@ -54,7 +54,7 @@ function App() {
     
     const tabList = [
       {
-        key: '/',
+        key: '/setoran',
         title: 'Setoran',
         icon: <BankcardOutline />
       },
@@ -86,7 +86,7 @@ function App() {
         <div style={{ height:(window.innerHeight-10), display:'flex', flexDirection:'column' }}>
           <div className="body">
             <Routes>
-              <Route exact path='/' element={<Setoran />} />
+              <Route exact path='/setoran' element={<Setoran />} />
               <Route exact path='/periode' element={<Periode />} />
               <Route exact path='/peserta' element={<Peserta />} />
             </Routes>

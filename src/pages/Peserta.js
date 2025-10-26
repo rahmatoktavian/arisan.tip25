@@ -78,7 +78,7 @@ function Peserta() {
   }
 
   async function onDelete() {
-    const isConfirmed = window.confirm("Are you sure you want to delete this item?");
+    const isConfirmed = window.confirm("Are you sure you want to delete?");
     if (isConfirmed) {
       setIsLoading(true)
 
@@ -108,7 +108,6 @@ function Peserta() {
           <List.Item 
             key={idx}
             description={row.telepon}
-            prefix={row.status ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
             onClick={() => onUpdate(row)}
           >
             {row.nama}
