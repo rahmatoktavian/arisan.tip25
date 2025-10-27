@@ -153,7 +153,7 @@ function Setoran() {
       
       <SearchBar placeholder='Cari Nama Peserta' style={{ marginTop:10, marginBottom:10 }} onChange={(text) => setDataSearch(text)} />
 
-      <div style={{height:600,overflow:'auto'}}>
+      <div style={{height:575,overflow:'auto'}}>
         <List>
         {dataList && dataList.map((row, idx) =>
           <List.Item 
