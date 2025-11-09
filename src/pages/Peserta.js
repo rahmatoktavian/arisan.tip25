@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { NavBar, List, Popup, Form, Input, Button, Toast, SpinLoading, Grid } from 'antd-mobile'
-import { AddCircleOutline, CheckCircleOutline, QuestionCircleOutline } from 'antd-mobile-icons'
+import { AddCircleOutline } from 'antd-mobile-icons'
 import { supabase } from '../supabase'
 
 function Peserta() {

@@ -27,7 +27,7 @@ function Periode() {
   }
 
   function onUpdate(row) {
-    if(row.tanggal != null) {
+    if(row.tanggal_akhir != null) {
       form.setFieldsValue({ 
         id: row.id,
         nama: row.nama,
@@ -39,10 +39,10 @@ function Periode() {
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const year = today.getFullYear();
       const formattedDate = `${year}-${month}-${day}`;
- 
+      
       form.setFieldsValue({ 
-        id: row.id,
-        nama: row.nama,
+        id: 0,
+        nama: '',
         tanggal_akhir: formattedDate,
       });
     }
@@ -56,6 +56,7 @@ function Periode() {
 
     //insert
     if(input.id === 0) {
+      console.log('insert')
       const periode_id = uuidv4();
       await supabase.from("ar_periode")
               .insert({
@@ -80,6 +81,7 @@ function Periode() {
 
     //update
     } else {
+      console.log('update')
       await supabase.from("ar_periode")
               .update({
                 nama: input.nama,
@@ -118,9 +120,18 @@ function Periode() {
     }
   }
 
+  function onClose() {
+    setPopupVisible(false)
+    form.setFieldsValue({ 
+        id: 0,
+        nama: '',
+        tanggal_akhir: '',
+      });
+  }
+
   return (
     <>
-      <NavBar backArrow={false} right={<AddCircleOutline fontSize={28} onClick={() => onUpdate(0)} />}>
+      <NavBar backArrow={false} right={<AddCircleOutline fontSize={28} onClick={() => onUpdate({})} />}>
         <span style={{fontSize:23}}>Periode</span>
       </NavBar>
       <div style={{height:580,overflow:'auto'}}>
@@ -139,8 +150,8 @@ function Periode() {
 
       <Popup
         visible={popupVisible}
-        onMaskClick={() => {setPopupVisible(false)}}
-        onClose={() => {setPopupVisible(false)}}
+        onMaskClick={() => onClose()}
+        onClose={() => onClose()}
       >
         <Form 
           layout='horizontal'
@@ -169,7 +180,7 @@ function Periode() {
           }
         >
           <Form.Header>Data Peserta</Form.Header>
-          <Form.Item name='id' hidden rules={[{ required:true, message:'Wajib diisi' }]}>
+          <Form.Item name='id' hidden>
             <Input placeholder='ID' />
           </Form.Item>
           <Form.Item label='Nama' name='nama' rules={[{ required:true, message:'Wajib diisi' }]}>

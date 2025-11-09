@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { NavBar, List, Popup, Form, Input, Radio, SearchBar, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
+import { NavBar, List, Form, SearchBar, Button, Toast, SpinLoading, Picker } from 'antd-mobile'
 import { StopOutline, StarOutline, StarFill, CheckCircleOutline, QuestionCircleOutline } from 'antd-mobile-icons'
+import { ethers } from "ethers"
+;
 import { supabase } from '../supabase'
 
 function Setoran() {
@@ -10,7 +12,6 @@ function Setoran() {
   const [dataList, setDataList] = useState([])
   const [dataSearch, setDataSearch] = useState('')
 
-  // const [periodID, setPeriodeID] = useState('')
   const [pickerView, setPickerView] = useState(false)
   const [pickerList, setPickerList] = useState()
   const [pickerValue, setPickerValue] = useState('')
@@ -42,7 +43,7 @@ function Setoran() {
   async function getDataList(periodeID) {
     Toast.show({ content: (<SpinLoading />) })
     const { data } = await supabase.from("ar_setoran_peserta")
-                              .select('id, periode_id, is_bayar, is_pemenang, ar_peserta!inner(nama,telepon)')
+                              .select('id, periode_id, peserta_id, is_bayar, is_pemenang, ar_peserta!inner(nama,telepon), ar_periode!inner(nama)')
                               .eq('periode_id', periodeID)
                               .ilike('ar_peserta.nama', '%'+dataSearch+'%')
                               .order('ar_peserta(nama)', { ascending:true })
@@ -54,15 +55,39 @@ function Setoran() {
   async function onUpdate(tipe, row) {
     const isConfirmed = window.confirm("Are you sure you want to update?");
     if (isConfirmed) {
-    setIsLoading(true)
-    
+    Toast.show({ content: (<SpinLoading />) })
+
     if(tipe == 'bayar') {
         await supabase.from("ar_setoran_peserta")
             .update({
                 is_bayar: true,
               })
             .eq('id', row.id)
+        
+        //blockchain
+        // const today = new Date();
+        // const day = String(today.getDate()).padStart(2, '0');
+        // const month = String(today.getMonth() + 1).padStart(2, '0');
+        // const year = today.getFullYear();
+        // const formattedDate = `${year}${month}${day}`;
+        
+        // const dataBlockchain = {
+        //       periode_id: row.periode_id,
+        //       periode_nama: row.ar_periode.nama,
+        //       peserta_id: row.peserta_id,
+        //       peserta_nama: row.ar_peserta.nama,
+        //       amountScaled: 100000,
+        //       tanggal_ymd: Number(formattedDate),
+        // }
 
+        // const response = await fetch("http://localhost:4000/setoran", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(dataBlockchain),
+        // });
+        
       } else {
         await supabase.from("ar_setoran_peserta")
                 .update({
@@ -84,40 +109,9 @@ function Setoran() {
         icon: 'success',
         content: 'Berhasil simpan data',
       })
+      Toast.clear()
     }
   }
-
-  // async function onSubmit(input) {
-  //   setIsLoading(true)
-    
-  //   //insert
-  //   if(input.id === 0) {
-  //     await supabase.from("ar_setoran_peserta")
-  //             .insert({
-  //               nominal: input.nominal,
-  //               tanggal: input.tanggal,
-  //             })
-
-  //   //update
-  //   } else {
-  //     await supabase.from("ar_setoran_peserta")
-  //             .update({
-  //               nominal: input.nominal,
-  //               tanggal: input.tanggal,
-  //               is_pemenang: input.is_pemenang,
-  //             })
-  //             .eq('id', input.id)
-  //   }
-
-  //   await getDataList(input.periode_id)
-  //   setPopupVisible(false)
-  //   setIsLoading(false)
-
-  //   Toast.show({
-  //     icon: 'success',
-  //     content: 'Berhasil simpan data',
-  //   })
-  // }
 
   const onPickerChange = (value) => {
     pickerList[0].map(row => {
@@ -139,7 +133,7 @@ function Setoran() {
       <NavBar backArrow={false} right={<StopOutline fontSize={23} onClick={() => onSignOut()} />}>
         <span style={{fontSize:23}}>Setoran</span>
       </NavBar>
-
+    
       <Button block size='small' fill='outline' color='primary' onClick={() => setPickerView(true)}>Periode: {pickerLabel}</Button>
       <Picker
         columns={pickerList}
@@ -167,48 +161,6 @@ function Setoran() {
           )}
         </List>
       </div>
-
-      {/* <Popup
-        visible={popupVisible}
-        onMaskClick={() => {setPopupVisible(false)}}
-        onClose={() => {setPopupVisible(false)}}
-      >
-        <Form 
-          layout='horizontal'
-          onFinish={onSubmit}
-          form={form}
-          footer={
-            <>
-              <Button shape='rounded' loading={isLoading} color='primary' fill='solid' block type='submit'>
-                Simpan
-              </Button>
-              <Button shape='rounded' loading={isLoading} color='primary' fill='outline' block onClick={() => setPopupVisible(false)} style={{marginTop:10}}>
-                Batal
-              </Button>
-            </>
-          }
-        >
-          <Form.Header>Data Peserta</Form.Header>
-          <Form.Item name='id' hidden rules={[{ required:true, message:'Wajib diisi' }]}>
-            <Input placeholder='id' />
-          </Form.Item>
-          <Form.Item name='periode_id' hidden rules={[{ required:true, message:'Wajib diisi' }]}>
-            <Input placeholder='periode_id' />
-          </Form.Item>
-          <Form.Item label="Nominal" name='nominal' rules={[{ required:true, message:'Wajib diisi' }]}>
-            <Input placeholder='Nominal' type='number' />
-          </Form.Item>
-          <Form.Item label="Tanggal" name='tanggal' rules={[{ required:true, message:'Wajib diisi' }]}>
-            <Input placeholder='Tanggal Bayar' type='date' />
-          </Form.Item>
-          <Form.Item label="Pemenang" name='is_pemenang' rules={[{ required:true, message:'Wajib diisi' }]}>
-            <Radio.Group>
-              <Radio value={true}> Ya</Radio>
-              <Radio value={false} style={{marginLeft:10}}> Tidak</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Form>
-      </Popup> */}
     </>
   );
 }
