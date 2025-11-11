@@ -80,7 +80,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/arisan.tip25">
       {session ?
         
         <div style={{ height:(window.innerHeight-10), display:'flex', flexDirection:'column' }}>
