@@ -86,9 +86,9 @@ function App() {
         <div style={{ height:(window.innerHeight-10), display:'flex', flexDirection:'column' }}>
           <div className="body">
             <Routes>
-              <Route exact path='/setoran' element={<Setoran />} />
-              <Route exact path='/periode' element={<Periode />} />
-              <Route exact path='/peserta' element={<Peserta />} />
+              <Route exact path='/arisan.tip25/setoran' element={<Setoran />} />
+              <Route exact path='/arisan.tip25/periode' element={<Periode />} />
+              <Route exact path='/arisan.tip25/peserta' element={<Peserta />} />
             </Routes>
           </div>
           <div className="bottom">
