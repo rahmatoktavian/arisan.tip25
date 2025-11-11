@@ -54,17 +54,17 @@ function App() {
     
     const tabList = [
       {
-        key: '/setoran',
+        key: '/arisan.tip25/setoran',
         title: 'Setoran',
         icon: <BankcardOutline />
       },
       {
-        key: '/periode',
+        key: '/arisan.tip25/periode',
         title: 'Periode',
         icon: <CalendarOutline />
       },
       {
-        key: '/peserta',
+        key: '/arisan.tip25/peserta',
         title: 'Peserta',
         icon: <UserContactOutline />
       },
@@ -86,7 +86,7 @@ function App() {
         <div style={{ height:(window.innerHeight-10), display:'flex', flexDirection:'column' }}>
           <div className="body">
             <Routes>
-              <Route path="/" element={<Navigate to="/setoran" replace />} />
+              <Route path="/" element={<Navigate to="/arisan.tip25/setoran" replace />} />
               <Route exact path='/arisan.tip25/setoran' element={<Setoran />} />
               <Route exact path='/arisan.tip25/periode' element={<Periode />} />
               <Route exact path='/arisan.tip25/peserta' element={<Peserta />} />
