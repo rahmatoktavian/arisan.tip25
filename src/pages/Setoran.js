@@ -159,9 +159,8 @@ function Setoran() {
         {dataList && dataList.map((row, idx) =>
           <List.Item 
             key={idx}
-            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
+            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' onClick={() => onUpdate('unpaid', row)} /> : <QuestionCircleOutline fontSize={25} onClick={() => onUpdate('paid', row)} />} 
             extra={row.is_bayar && (row.is_pemenang ? <StarFill fontSize={25} color='var(--adm-color-primary)' /> : <StarOutline fontSize={25} onClick={() => onUpdate('pemenang', row)} />)} 
-            onClick={() => row.is_bayar ? onUpdate('unpaid', row) : onUpdate('paid', row)}
           >
             {row.ar_peserta.nama}
           </List.Item>
