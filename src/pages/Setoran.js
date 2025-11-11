@@ -57,7 +57,7 @@ function Setoran() {
     if (isConfirmed) {
     Toast.show({ content: (<SpinLoading />) })
 
-    if(tipe == 'bayar') {
+    if(tipe == 'paid') {
         await supabase.from("ar_setoran_peserta")
             .update({
                 is_bayar: true,
@@ -88,6 +88,13 @@ function Setoran() {
         //   body: JSON.stringify(dataBlockchain),
         // });
         
+      } else if(tipe == 'unpaid') {
+        await supabase.from("ar_setoran_peserta")
+            .update({
+                is_bayar: false,
+              })
+            .eq('id', row.id)
+
       } else {
         await supabase.from("ar_setoran_peserta")
                 .update({
@@ -152,9 +159,9 @@ function Setoran() {
         {dataList && dataList.map((row, idx) =>
           <List.Item 
             key={idx}
-            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} onClick={() => onUpdate('bayar', row)} />} 
+            prefix={row.is_bayar ? <CheckCircleOutline fontSize={25} color='var(--adm-color-primary)' /> : <QuestionCircleOutline fontSize={25} />} 
             extra={row.is_bayar && (row.is_pemenang ? <StarFill fontSize={25} color='var(--adm-color-primary)' /> : <StarOutline fontSize={25} onClick={() => onUpdate('pemenang', row)} />)} 
-            // onClick={() => onUpdate(row)}
+            onClick={() => row.is_bayar ? onUpdate('unpaid', row) : onUpdate('paid', row)}
           >
             {row.ar_peserta.nama}
           </List.Item>
