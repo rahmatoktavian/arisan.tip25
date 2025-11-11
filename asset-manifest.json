@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/arisan.tip25/static/css/main.a4f76804.css",
-    "main.js": "/arisan.tip25/static/js/main.eb2705f6.js",
+    "main.js": "/arisan.tip25/static/js/main.65908518.js",
     "static/js/453.04a70a28.chunk.js": "/arisan.tip25/static/js/453.04a70a28.chunk.js",
     "index.html": "/arisan.tip25/index.html",
     "main.a4f76804.css.map": "/arisan.tip25/static/css/main.a4f76804.css.map",
-    "main.eb2705f6.js.map": "/arisan.tip25/static/js/main.eb2705f6.js.map",
+    "main.65908518.js.map": "/arisan.tip25/static/js/main.65908518.js.map",
     "453.04a70a28.chunk.js.map": "/arisan.tip25/static/js/453.04a70a28.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a4f76804.css",
-    "static/js/main.eb2705f6.js"
+    "static/js/main.65908518.js"
   ]
 }
