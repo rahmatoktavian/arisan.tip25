@@ -97,12 +97,6 @@ function Setoran() {
 
       } else {
         await supabase.from("ar_setoran_peserta")
-                .update({
-                    is_pemenang: false,
-                  })
-                .eq('is_pemenang', true)
-
-        await supabase.from("ar_setoran_peserta")
             .update({
                 is_pemenang: true,
               })
